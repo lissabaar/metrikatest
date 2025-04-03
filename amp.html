@@ -42,12 +42,12 @@
 <body>
           <amp-analytics type="metrika">
             <script type="application/json">
-                {
-                    "vars": {
-                        "counterId": "99989520",
-                        "yaParams": "{\"amp\":\"amp_1\"}"
-                    },
-                 "triggers": {
+{
+    "vars": {
+        "counterId": "99989520",
+        "yaParams": "{\"amp\":\"amp_1\"}"
+    },
+    "triggers": {
         "btnGoalReach": {
             "on": "click",
             "selector": "#testbtn",
@@ -55,28 +55,15 @@
             "vars": {
                 "goalId": "getstartedbtn"
             }
-        },
-              }
-                }
+        }
+    }
+}
             </script>
         </amp-analytics>
   <div class="container">
     <h1>Тестовая страница</h1>
     <p>Нажмите на кнопку:</p>
-    <button on="tap:alert-button" id="testbtn">Нажми меня</button>
+    <button id="testbtn">Нажми меня</button>
   </div>
-
-  <!-- Простое AMP-действие (без метрики) -->
-  <amp-script layout="container" src="https://example.com/script.js">
-    <script type="application/json">
-      {
-        "actions": {
-          "alert-button": {
-            "code": "alert('Кнопка работает!')"
-          }
-        }
-      }
-    </script>
-  </amp-script>
 </body>
 </html>
