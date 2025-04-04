@@ -594,14 +594,16 @@ console.log('my flags : ' + flags.flag)
                     <img src="img/widget2.png" width="130" height="98" alt="#"
                         class="page-footer-content-widget-item-img">
                 </a>
-                <a href="#" class="page-footer-content-widget-item">
-                    <img src="img/widget3.png" width="130" height="98" alt="#"
-                        class="page-footer-content-widget-item-img">
-                </a>
-                <a href="#" class="page-footer-content-widget-item">
-                    <img src="img/widget4.png" width="130" height="98" alt="#"
-                        class="page-footer-content-widget-item-img">
-                </a>
+
+            <form method="POST" action="https://yoomoney.ru/quickpay/confirm">
+    <input type="hidden" name="receiver" value="41001xxxxxxxxxxxx"/>
+    <input type="hidden" name="label" value="$order_id"/>
+    <input type="hidden" name="quickpay-form" value="button"/>
+    <input type="hidden" name="sum" value="4568.25" data-type="number"/>
+    <label><input type="radio" name="paymentType" value="PC"/>ЮMoney</label>
+    <label><input type="radio" name="paymentType" value="AC"/>Банковской картой</label>
+    <input type="submit" value="Перевести" onclick="ym(99989520,'reachGoal','yoomoney')"/>
+</form>
             </div>
         </section>
         <section class="page-footer-copyright">
@@ -613,16 +615,6 @@ console.log('my flags : ' + flags.flag)
 
             Designed by <a href="#" class="page-footer-copyright-link">ThemeFire</a>
             Only on <a href="#" class="page-footer-copyright-link">Envato Market</a>
-
-            <form method="POST" action="https://yoomoney.ru/quickpay/confirm">
-    <input type="hidden" name="receiver" value="41001xxxxxxxxxxxx"/>
-    <input type="hidden" name="label" value="$order_id"/>
-    <input type="hidden" name="quickpay-form" value="button"/>
-    <input type="hidden" name="sum" value="4568.25" data-type="number"/>
-    <label><input type="radio" name="paymentType" value="PC"/>ЮMoney</label>
-    <label><input type="radio" name="paymentType" value="AC"/>Банковской картой</label>
-    <input type="submit" value="Перевести" onclick="ym(99989520,'reachGoal','yoomoney')"/>
-</form>
 
 
         </section>
