@@ -58,6 +58,50 @@ ymab('metrika.99989520', 'getFlags', function(flags) {
 console.log('my flags : ' + flags.flag)
     });
 </script>
+
+    <script>
+        // Функция для генерации случайного ID
+function generateRandomID() {
+  // Генерируем случайное число и преобразуем в строку base36 (содержит цифры и буквы)
+  const randomPart = Math.random().toString(36).substring(2);
+  
+  // Добавляем временную метку для большей уникальности
+  const timestamp = Date.now().toString(36);
+  
+  // Комбинируем и возвращаем ID длиной до 15 символов
+  return (timestamp + randomPart).substring(0, 15);
+}
+
+// Функция для получения или создания userID
+function getOrCreateUserID() {
+  const storageKey = 'userID'; // Ключ для localStorage
+  
+  // Проверяем, есть ли уже сохраненный ID
+  let userID = localStorage.getItem(storageKey);
+  
+  // Если ID нет в localStorage - создаем новый и сохраняем
+  if (!userID) {
+    userID = generateRandomID();
+    localStorage.setItem(storageKey, userID);
+    console.log('Новый userID создан и сохранен:', userID);
+  } else {
+    console.log('Найден сохраненный userID:', userID);
+  }
+  
+  return userID;
+}
+
+// Использование:
+const currentUserID = getOrCreateUserID();
+console.log('Текущий userID:', currentUserID);
+
+// Дополнительно: можно добавить этот ID в объект window для глобального доступа
+window.userID = currentUserID;
+        ym(99989520, 'setUserID', currentUserID);
+ym(99989520, 'userParams', {
+        UserID: currentUserID + 1
+});
+    </script>
 </head>
 
 <body>
