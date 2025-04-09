@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Магазин - Mock Shop</title>
+    <title>Корзина - Mock Shop</title>
     <link rel="stylesheet" href="css/store_style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -33,186 +33,69 @@
             <ul class="nav-links">
                 <li><a href="https://lissabaar.github.io/metrikatest/">Главная</a></li>
                 <li><a href="store.html">Магазин</a></li>
+                <li><a href="cart.html">Корзина (<span id="cart-count">0</span>)</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="container">
-        <section id="products-section">
-            <div class="products-grid" id="products-grid"></div>
-        </section>
-
-        <section id="cart-section" class="hidden">
-            <div id="cart-items"></div>
+        <h1>Ваша корзина</h1>
+        
+        <div id="cart-items-container">
+            <!-- Товары будут здесь -->
+        </div>
+        
+        <div id="empty-cart-message" class="hidden">
+            <p>Ваша корзина пуста</p>
+            <a href="store.html" class="btn btn-primary">Перейти в магазин</a>
+        </div>
+        
+        <div id="cart-summary">
             <p class="cart-total">Итого: <span id="cart-total">0</span> руб.</p>
-            <button class="btn btn-primary" onclick="checkout()">Оформить заказ</button>
-        </section>
+            
+            <div id="checkout-form" class="checkout-form">
+                <h2>Оформление заказа</h2>
+                
+                <div class="form-group">
+                    <label for="name">Имя:</label>
+                    <input type="text" id="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Телефон:</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Адрес доставки:</label>
+                    <textarea id="address" rows="3" required></textarea>
+                </div>
+                
+                <button class="btn btn-primary" onclick="checkout()">Оформить заказ</button>
+            </div>
+        </div>
     </div>
 
     <script>
         window.dataLayer = window.dataLayer || [];
         
-        const products = [
-            {
-                id: '1',
-                name: 'Футболка Premium',
-                price: 1500,
-                image: 'https://via.placeholder.com/400x300/2c3e50/ffffff?text=T-Shirt',
-                variants: {
-                    color: ['белый', 'черный'],
-                    size: ['S', 'M', 'L']
-                }
-            },
-            {
-                id: '2',
-                name: 'Кроссовки Pro',
-                price: 5000,
-                image: 'https://via.placeholder.com/400x300/e74c3c/ffffff?text=Sneakers',
-                variants: {
-                    size: ['38', '39', '40']
-                }
-            }
-        ];
-
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-        function showSection(sectionId) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`${sectionId}-section`).classList.remove('hidden');
-            if(sectionId === 'products') renderProducts();
-            if(sectionId === 'cart') renderCart();
-        }
-
-        function renderProducts() {
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = products.map(product => `
-                <div class="product-card">
-                    <div class="product-image" style="background-image: url('${product.image}')"></div>
-                    <div class="product-content">
-                        <h3 class="product-title">${product.name}</h3>
-                        <p class="product-price">${product.price.toLocaleString()} руб.</p>
-                        ${Object.entries(product.variants).map(([key, values]) => `
-                            <label class="variant-label">${key}:</label>
-                            <select data-product="${product.id}" data-variant="${key}">
-                                ${values.map(v => `<option>${v}</option>`).join('')}
-                            </select>
-                        `).join('')}
-                        <button class="btn btn-primary" onclick="addToCart('${product.id}')">В корзину</button>
-                        <a href="product-${product.id}.html" class="btn btn-outline">Подробнее</a>
-                    </div>
-                </div>
-            `).join('');
-
-            // Событие просмотра списка товаров
-            dataLayer.push({
-                ecommerce: {
-                    currencyCode: "RUB",
-                    impressions: products.map(p => ({
-                        id: p.id,
-                        name: p.name,
-                        price: p.price,
-                        category: 'Одежда',
-                        list: 'Главная страница магазина'
-                    }))
-                }
-            });
-        }
-
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            const variants = {};
+        
+        // Загрузка корзины при открытии страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCart();
+            updateCartCount();
             
-            document.querySelectorAll(`[data-product="${productId}"]`).forEach(select => {
-                const variantType = select.dataset.variant;
-                variants[variantType] = select.value;
-            });
-
-            const existingItemIndex = cart.findIndex(item => 
-                item.id === productId && 
-                JSON.stringify(item.variant) === JSON.stringify(variants));
-
-            if(existingItemIndex >= 0) {
-                cart[existingItemIndex].quantity += 1;
-            } else {
-                cart.push({
-                    ...product,
-                    variant: variants,
-                    quantity: 1
-                });
-            }
-
-            updateCart();
-
-            // Событие добавления в корзину
+            // Событие просмотра корзины
             dataLayer.push({
-                event: "addToCart",
                 ecommerce: {
                     currencyCode: "RUB",
-                    add: {
-                        products: [{
-                            id: product.id,
-                            name: product.name,
-                            price: product.price,
-                            variant: JSON.stringify(variants),
-                            quantity: 1
-                        }]
-                    }
-                }
-            });
-        }
-
-        function renderCart() {
-            const cartItems = document.getElementById('cart-items');
-            cartItems.innerHTML = cart.map((item, index) => `
-                <div class="cart-item">
-                    <h3>${item.name} (${Object.values(item.variant).join(', ')})</h3>
-                    <p>Цена: ${item.price.toLocaleString()} руб. x ${item.quantity}</p>
-                    <button class="btn btn-outline" onclick="removeFromCart(${index})">Удалить</button>
-                </div>
-            `).join('');
-
-            document.getElementById('cart-total').textContent = 
-                cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString();
-        }
-
-        function removeFromCart(index) {
-            const removed = cart.splice(index, 1)[0];
-            updateCart();
-
-            // Событие удаления из корзины
-            dataLayer.push({
-                event: "removeFromCart",
-                ecommerce: {
-                    currencyCode: "RUB",
-                    remove: {
-                        products: [{
-                            id: removed.id,
-                            name: removed.name,
-                            price: removed.price,
-                            variant: JSON.stringify(removed.variant),
-                            quantity: removed.quantity
-                        }]
-                    }
-                }
-            });
-        }
-
-        function checkout() {
-            if(cart.length === 0) {
-                alert('Корзина пуста!');
-                return;
-            }
-
-            // Событие оформления заказа
-            dataLayer.push({
-                event: "purchase",
-                ecommerce: {
-                    currencyCode: "RUB",
-                    purchase: {
-                        actionField: {
-                            id: "mock_order_" + Date.now(),
-                            revenue: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-                        },
+                    cart: {
                         products: cart.map(item => ({
                             id: item.id,
                             name: item.name,
@@ -223,21 +106,165 @@
                     }
                 }
             });
+        });
 
-            cart = [];
-            updateCart();
-            alert('Заказ оформлен! Спасибо за покупку!');
-            showSection('products');
+        function renderCart() {
+            const cartItemsContainer = document.getElementById('cart-items-container');
+            const emptyCartMessage = document.getElementById('empty-cart-message');
+            const cartSummary = document.getElementById('cart-summary');
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '';
+                emptyCartMessage.classList.remove('hidden');
+                cartSummary.classList.add('hidden');
+                return;
+            }
+            
+            emptyCartMessage.classList.add('hidden');
+            cartSummary.classList.remove('hidden');
+            
+            cartItemsContainer.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <div class="cart-item-image" style="background-image: url('${item.image}')"></div>
+                    <div class="cart-item-info">
+                        <h3>${item.name}</h3>
+                        <p>${Object.entries(item.variant).map(([key, value]) => 
+                            `<span class="variant">${key}: ${value}</span>`).join(' ')}</p>
+                        <p class="price">${item.price.toLocaleString()} руб. × 
+                            <input type="number" min="1" value="${item.quantity}" 
+                                   onchange="updateQuantity(${index}, this.value)">
+                        </p>
+                    </div>
+                    <button class="btn btn-outline" onclick="removeFromCart(${index})">
+                        Удалить
+                    </button>
+                </div>
+            `).join('');
+            
+            document.getElementById('cart-total').textContent = 
+                cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString();
         }
-
-        function updateCart() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-            document.getElementById('cart-count').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+        
+        function updateQuantity(index, newQuantity) {
+            newQuantity = parseInt(newQuantity);
+            if (newQuantity < 1) newQuantity = 1;
+            
+            cart[index].quantity = newQuantity;
+            saveCart();
             renderCart();
+            
+            // Событие изменения количества
+            dataLayer.push({
+                event: "cartChange",
+                ecommerce: {
+                    currencyCode: "RUB",
+                    change: {
+                        products: [{
+                            id: cart[index].id,
+                            name: cart[index].name,
+                            price: cart[index].price,
+                            variant: JSON.stringify(cart[index].variant),
+                            quantity: newQuantity
+                        }]
+                    }
+                }
+            });
         }
-
-        // Инициализация
-        renderProducts();
+        
+        function removeFromCart(index) {
+            const removedItem = cart.splice(index, 1)[0];
+            saveCart();
+            renderCart();
+            updateCartCount();
+            
+            // Событие удаления из корзины
+            dataLayer.push({
+                event: "removeFromCart",
+                ecommerce: {
+                    currencyCode: "RUB",
+                    remove: {
+                        products: [{
+                            id: removedItem.id,
+                            name: removedItem.name,
+                            price: removedItem.price,
+                            variant: JSON.stringify(removedItem.variant),
+                            quantity: removedItem.quantity
+                        }]
+                    }
+                }
+            });
+        }
+        
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Корзина пуста!');
+                return;
+            }
+            
+            // Валидация формы
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const address = document.getElementById('address').value.trim();
+            
+            if (!name || !phone || !email || !address) {
+                alert('Пожалуйста, заполните все поля формы!');
+                return;
+            }
+            
+            // Создаем объект заказа
+            const order = {
+                id: 'order_' + Date.now(),
+                date: new Date().toISOString(),
+                customer: { name, phone, email, address },
+                items: [...cart],
+                total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+            };
+            
+            // Событие оформления заказа
+            dataLayer.push({
+                event: "purchase",
+                ecommerce: {
+                    currencyCode: "RUB",
+                    purchase: {
+                        actionField: {
+                            id: order.id,
+                            revenue: order.total,
+                            tax: 0,
+                            shipping: 0
+                        },
+                        products: order.items.map(item => ({
+                            id: item.id,
+                            name: item.name,
+                            price: item.price,
+                            variant: JSON.stringify(item.variant),
+                            quantity: item.quantity,
+                            category: item.category || 'Одежда'
+                        }))
+                    }
+                }
+            });
+            
+            // Очищаем корзину
+            cart = [];
+            saveCart();
+            updateCartCount();
+            
+            // Показываем сообщение об успешном заказе
+            alert(`Заказ #${order.id} оформлен успешно!\nСумма: ${order.total.toLocaleString()} руб.`);
+            
+            // Перенаправляем на главную
+            window.location.href = 'store.html';
+        }
+        
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+        
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
     </script>
 </body>
 </html>
