@@ -1,64 +1,112 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <link rel="stylesheet" href="css/store_style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Футболка Premium - Mock Shop</title>
+    <link rel="stylesheet" href="css/store_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
     <!-- Yandex.Metrika counter -->
-<script type="text/javascript" >
-   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-   m[i].l=1*new Date();
-   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-   ym(99989520, "init", {
-        clickmap:true,
-        trackLinks:true,
-        accurateTrackBounce:true,
-        webvisor:true,
-        trackHash:true,
-        ecommerce:"dataLayer"
-   });
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/99989520" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
-    <!-- Повторяем те же стили и навигацию -->
+       ym(99989520, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true,
+            trackHash:true,
+            ecommerce:"dataLayer"
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/99989520" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <nav class="nav">
+        <div class="container">
+            <ul class="nav-links">
+                <li><a href="https://lissabaar.github.io/metrikatest/">Главная</a></li>
+                <li><a href="store.html">Магазин</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="product-detail">
+            <img src="https://via.placeholder.com/600x500/2c3e50/ffffff?text=T-Shirt" alt="Футболка Premium" class="product-detail-image">
+            <div>
+                <h1 class="product-detail-title">Футболка Premium</h1>
+                <p class="product-detail-price">1 500 руб.</p>
+                
+                <label class="variant-label">Цвет:</label>
+                <select id="color-select">
+                    <option>белый</option>
+                    <option>черный</option>
+                </select>
+                
+                <label class="variant-label">Размер:</label>
+                <select id="size-select">
+                    <option>S</option>
+                    <option>M</option>
+                    <option>L</option>
+                </select>
+                
+                <button class="btn btn-primary" onclick="addToCart()">Добавить в корзину</button>
+                <a href="store.html" class="btn btn-outline">Вернуться в магазин</a>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.dataLayer = window.dataLayer || [];
         
-        // Получаем ID товара из URL
-        const productId = window.location.pathname.split('-').pop().replace('.html', '');
-        const product = products.find(p => p.id === productId);
-
         // Событие просмотра товара
         dataLayer.push({
             ecommerce: {
                 currencyCode: "RUB",
                 detail: {
                     products: [{
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        category: 'Одежда'
+                        id: '1',
+                        name: 'Футболка Premium',
+                        price: 1500,
+                        category: 'Одежда',
+                        variant: 'белый/S'
                     }]
                 }
             }
         });
+
+        function addToCart() {
+            const variants = {
+                color: document.getElementById('color-select').value,
+                size: document.getElementById('size-select').value
+            };
+
+            // Событие добавления в корзину
+            dataLayer.push({
+                event: "addToCart",
+                ecommerce: {
+                    currencyCode: "RUB",
+                    add: {
+                        products: [{
+                            id: '1',
+                            name: 'Футболка Premium',
+                            price: 1500,
+                            variant: JSON.stringify(variants),
+                            quantity: 1
+                        }]
+                    }
+                }
+            });
+
+            alert('Товар добавлен в корзину!');
+        }
     </script>
-</head>
-<body>
-    <nav class="nav">
-        <div class="container">
-            <ul class="nav-links">
-                <li><a href="https://lissabaar.github.io/metrikatest/">Главная</a></li>
-                <li><a href="metrikatest/store.html">Магазин</a></li>
-            </ul>
-        </div>
-    </nav>
-    <!-- Детальная информация о товаре -->
-    <div class="product-detail">
-        <img src="${product.image}" alt="${product.name}">
-        <h1>${product.name}</h1>
-        <!-- Варианты выбора и кнопка добавления в корзину -->
-    </div>
 </body>
 </html>
