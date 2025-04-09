@@ -2,66 +2,62 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Mock Shop</title>
-    <style>
-        /* Базовые стили */
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .product-card, .cart-item { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
-        .hidden { display: none; }
-        .nav { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        button { cursor: pointer; padding: 8px 16px; }
-    </style>
-  <!-- Yandex.Metrika counter -->
-<script type="text/javascript" >
-   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-   m[i].l=1*new Date();
-   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-   ym(99989520, "init", {
-        clickmap:true,
-        trackLinks:true,
-        accurateTrackBounce:true,
-        webvisor:true,
-        trackHash:true,
-        ecommerce:"dataLayer"
-   });
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/99989520" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин - Mock Shop</title>
+    <link rel="stylesheet" href="css/store_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <!-- Навигация -->
-        <nav class="nav">
-            <button onclick="showSection('products')">Все товары</button>
-            <button onclick="showSection('cart')">Корзина (<span id="cart-count">0</span>)</button>
-        </nav>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-        <!-- Секция товаров -->
+       ym(99989520, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true,
+            trackHash:true,
+            ecommerce:"dataLayer"
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/99989520" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <nav class="nav">
+        <div class="container">
+            <ul class="nav-links">
+                <li><a href="https://lissabaar.github.io/metrikatest/">Главная</a></li>
+                <li><a href="store.html">Магазин</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
         <section id="products-section">
             <div class="products-grid" id="products-grid"></div>
         </section>
 
-        <!-- Секция корзины -->
         <section id="cart-section" class="hidden">
             <div id="cart-items"></div>
-            <p>Итого: <span id="cart-total">0</span> руб.</p>
-            <button onclick="checkout()">Оформить заказ</button>
+            <p class="cart-total">Итого: <span id="cart-total">0</span> руб.</p>
+            <button class="btn btn-primary" onclick="checkout()">Оформить заказ</button>
         </section>
     </div>
 
-    <!-- DataLayer -->
     <script>
         window.dataLayer = window.dataLayer || [];
         
         const products = [
             {
                 id: '1',
-                name: 'Футболка',
+                name: 'Футболка Premium',
                 price: 1500,
+                image: 'https://via.placeholder.com/400x300/2c3e50/ffffff?text=T-Shirt',
                 variants: {
                     color: ['белый', 'черный'],
                     size: ['S', 'M', 'L']
@@ -69,8 +65,9 @@
             },
             {
                 id: '2',
-                name: 'Кроссовки',
+                name: 'Кроссовки Pro',
                 price: 5000,
+                image: 'https://via.placeholder.com/400x300/e74c3c/ffffff?text=Sneakers',
                 variants: {
                     size: ['38', '39', '40']
                 }
@@ -90,28 +87,33 @@
             const grid = document.getElementById('products-grid');
             grid.innerHTML = products.map(product => `
                 <div class="product-card">
-                    <h3>${product.name}</h3>
-                    <p>Цена: ${product.price} руб.</p>
-                    ${Object.entries(product.variants).map(([key, values]) => `
-                        <select data-product="${product.id}" data-variant="${key}">
-                            ${values.map(v => `<option>${v}</option>`).join('')}
-                        </select>
-                    `).join('')}
-                    <button onclick="addToCart('${product.id}')">В корзину</button>
+                    <div class="product-image" style="background-image: url('${product.image}')"></div>
+                    <div class="product-content">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-price">${product.price.toLocaleString()} руб.</p>
+                        ${Object.entries(product.variants).map(([key, values]) => `
+                            <label class="variant-label">${key}:</label>
+                            <select data-product="${product.id}" data-variant="${key}">
+                                ${values.map(v => `<option>${v}</option>`).join('')}
+                            </select>
+                        `).join('')}
+                        <button class="btn btn-primary" onclick="addToCart('${product.id}')">В корзину</button>
+                        <a href="product-${product.id}.html" class="btn btn-outline">Подробнее</a>
+                    </div>
                 </div>
             `).join('');
 
-            // Отправка события просмотра товаров
+            // Событие просмотра списка товаров
             dataLayer.push({
                 ecommerce: {
                     currencyCode: "RUB",
-                    detail: {
-                        products: products.map(p => ({
-                            id: p.id,
-                            name: p.name,
-                            price: p.price
-                        }))
-                    }
+                    impressions: products.map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        price: p.price,
+                        category: 'Одежда',
+                        list: 'Главная страница магазина'
+                    }))
                 }
             });
         }
@@ -125,18 +127,25 @@
                 variants[variantType] = select.value;
             });
 
-            const cartItem = {
-                ...product,
-                variant: variants,
-                quantity: 1
-            };
+            const existingItemIndex = cart.findIndex(item => 
+                item.id === productId && 
+                JSON.stringify(item.variant) === JSON.stringify(variants));
 
-            cart.push(cartItem);
+            if(existingItemIndex >= 0) {
+                cart[existingItemIndex].quantity += 1;
+            } else {
+                cart.push({
+                    ...product,
+                    variant: variants,
+                    quantity: 1
+                });
+            }
+
             updateCart();
 
             // Событие добавления в корзину
             dataLayer.push({
-                event: "add_to_cart",
+                event: "addToCart",
                 ecommerce: {
                     currencyCode: "RUB",
                     add: {
@@ -157,13 +166,13 @@
             cartItems.innerHTML = cart.map((item, index) => `
                 <div class="cart-item">
                     <h3>${item.name} (${Object.values(item.variant).join(', ')})</h3>
-                    <p>Цена: ${item.price} руб. x ${item.quantity}</p>
-                    <button onclick="removeFromCart(${index})">Удалить</button>
+                    <p>Цена: ${item.price.toLocaleString()} руб. x ${item.quantity}</p>
+                    <button class="btn btn-outline" onclick="removeFromCart(${index})">Удалить</button>
                 </div>
             `).join('');
 
             document.getElementById('cart-total').textContent = 
-                cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+                cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString();
         }
 
         function removeFromCart(index) {
@@ -172,7 +181,7 @@
 
             // Событие удаления из корзины
             dataLayer.push({
-                event: "remove_from_cart",
+                event: "removeFromCart",
                 ecommerce: {
                     currencyCode: "RUB",
                     remove: {
@@ -189,6 +198,11 @@
         }
 
         function checkout() {
+            if(cart.length === 0) {
+                alert('Корзина пуста!');
+                return;
+            }
+
             // Событие оформления заказа
             dataLayer.push({
                 event: "purchase",
@@ -196,7 +210,8 @@
                     currencyCode: "RUB",
                     purchase: {
                         actionField: {
-                            id: "mock_order_" + Date.now()
+                            id: "mock_order_" + Date.now(),
+                            revenue: cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
                         },
                         products: cart.map(item => ({
                             id: item.id,
@@ -211,12 +226,13 @@
 
             cart = [];
             updateCart();
-            alert('Заказ оформлен!');
+            alert('Заказ оформлен! Спасибо за покупку!');
+            showSection('products');
         }
 
         function updateCart() {
             localStorage.setItem('cart', JSON.stringify(cart));
-            document.getElementById('cart-count').textContent = cart.length;
+            document.getElementById('cart-count').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
             renderCart();
         }
 
