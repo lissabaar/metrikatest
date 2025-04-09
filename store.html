@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Mock Shop</title>
+    <style>
+        /* Базовые стили */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .product-card, .cart-item { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
+        .hidden { display: none; }
+        .nav { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        button { cursor: pointer; padding: 8px 16px; }
+    </style>
+  <!-- Yandex.Metrika counter -->
+<script type="text/javascript" >
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();
+   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym(99989520, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true,
+        webvisor:true,
+        trackHash:true,
+        ecommerce:"dataLayer"
+   });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/99989520" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+    <div class="container">
+        <!-- Навигация -->
+        <nav class="nav">
+            <button onclick="showSection('products')">Все товары</button>
+            <button onclick="showSection('cart')">Корзина (<span id="cart-count">0</span>)</button>
+        </nav>
+
+        <!-- Секция товаров -->
+        <section id="products-section">
+            <div class="products-grid" id="products-grid"></div>
+        </section>
+
+        <!-- Секция корзины -->
+        <section id="cart-section" class="hidden">
+            <div id="cart-items"></div>
+            <p>Итого: <span id="cart-total">0</span> руб.</p>
+            <button onclick="checkout()">Оформить заказ</button>
+        </section>
+    </div>
+
+    <!-- DataLayer -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        
+        const products = [
+            {
+                id: '1',
+                name: 'Футболка',
+                price: 1500,
+                variants: {
+                    color: ['белый', 'черный'],
+                    size: ['S', 'M', 'L']
+                }
+            },
+            {
+                id: '2',
+                name: 'Кроссовки',
+                price: 5000,
+                variants: {
+                    size: ['38', '39', '40']
+                }
+            }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`${sectionId}-section`).classList.remove('hidden');
+            if(sectionId === 'products') renderProducts();
+            if(sectionId === 'cart') renderCart();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <h3>${product.name}</h3>
+                    <p>Цена: ${product.price} руб.</p>
+                    ${Object.entries(product.variants).map(([key, values]) => `
+                        <select data-product="${product.id}" data-variant="${key}">
+                            ${values.map(v => `<option>${v}</option>`).join('')}
+                        </select>
+                    `).join('')}
+                    <button onclick="addToCart('${product.id}')">В корзину</button>
+                </div>
+            `).join('');
+
+            // Отправка события просмотра товаров
+            dataLayer.push({
+                ecommerce: {
+                    currencyCode: "RUB",
+                    detail: {
+                        products: products.map(p => ({
+                            id: p.id,
+                            name: p.name,
+                            price: p.price
+                        }))
+                    }
+                }
+            });
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const variants = {};
+            
+            document.querySelectorAll(`[data-product="${productId}"]`).forEach(select => {
+                const variantType = select.dataset.variant;
+                variants[variantType] = select.value;
+            });
+
+            const cartItem = {
+                ...product,
+                variant: variants,
+                quantity: 1
+            };
+
+            cart.push(cartItem);
+            updateCart();
+
+            // Событие добавления в корзину
+            dataLayer.push({
+                event: "add_to_cart",
+                ecommerce: {
+                    currencyCode: "RUB",
+                    add: {
+                        products: [{
+                            id: product.id,
+                            name: product.name,
+                            price: product.price,
+                            variant: JSON.stringify(variants),
+                            quantity: 1
+                        }]
+                    }
+                }
+            });
+        }
+
+        function renderCart() {
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <h3>${item.name} (${Object.values(item.variant).join(', ')})</h3>
+                    <p>Цена: ${item.price} руб. x ${item.quantity}</p>
+                    <button onclick="removeFromCart(${index})">Удалить</button>
+                </div>
+            `).join('');
+
+            document.getElementById('cart-total').textContent = 
+                cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        }
+
+        function removeFromCart(index) {
+            const removed = cart.splice(index, 1)[0];
+            updateCart();
+
+            // Событие удаления из корзины
+            dataLayer.push({
+                event: "remove_from_cart",
+                ecommerce: {
+                    currencyCode: "RUB",
+                    remove: {
+                        products: [{
+                            id: removed.id,
+                            name: removed.name,
+                            price: removed.price,
+                            variant: JSON.stringify(removed.variant),
+                            quantity: removed.quantity
+                        }]
+                    }
+                }
+            });
+        }
+
+        function checkout() {
+            // Событие оформления заказа
+            dataLayer.push({
+                event: "purchase",
+                ecommerce: {
+                    currencyCode: "RUB",
+                    purchase: {
+                        actionField: {
+                            id: "mock_order_" + Date.now()
+                        },
+                        products: cart.map(item => ({
+                            id: item.id,
+                            name: item.name,
+                            price: item.price,
+                            variant: JSON.stringify(item.variant),
+                            quantity: item.quantity
+                        }))
+                    }
+                }
+            });
+
+            cart = [];
+            updateCart();
+            alert('Заказ оформлен!');
+        }
+
+        function updateCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            document.getElementById('cart-count').textContent = cart.length;
+            renderCart();
+        }
+
+        // Инициализация
+        renderProducts();
+    </script>
+</body>
+</html>
