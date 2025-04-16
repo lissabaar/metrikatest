@@ -60,6 +60,14 @@ ymab('metrika.99989520', 'setConfig', {
 ymab('metrika.99989520', 'getFlags', function(flags) {    
 console.log('my flags : ' + flags.flag)
     });
+
+  ymab('metrika.99989520', 'init', function(answer) {
+                const { flags, prepareUrl } = answer;
+      console.log('flags');
+      console.log(flags);
+      console.log('flags.key');
+      console.log(flags.key);
+    
 </script>
 
     <script>
