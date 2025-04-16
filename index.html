@@ -24,6 +24,9 @@
             padding: 8px 16px;
             cursor: pointer;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 <script>
     (function(a,n,t,i,f,li,c,k,e,r){
@@ -271,10 +274,10 @@ ym(99989520, 'userParams', {
                 <img src="img/preview_right.jpg" width="770" height="400" alt="preview"
                     class="page-main-design-previews-img-right">
             </div>
-                <button id="toggleButton">Показать/Скрыть</button>
+    <button id="toggleButton">Показать/Скрыть</button>
     
-    <div id="outerDiv" hidden>
-        Внешний скрытый div
+    <div id="outerDiv" class="hidden">
+        Внешний div (скрыт классом)
         <div id="innerDiv">
             Внутренний div
         </div>
@@ -285,14 +288,10 @@ ym(99989520, 'userParams', {
         const outerDiv = document.getElementById('outerDiv');
 
         toggleButton.addEventListener('click', function() {
-            if (outerDiv.hasAttribute('hidden')) {
-                outerDiv.removeAttribute('hidden');
-            } else {
-                outerDiv.setAttribute('hidden', '');
-            }
+            outerDiv.classList.toggle('hidden');
         });
     </script>
-</body>
+            
         </section>
         <aside class="page-main-purchase-now">
             <div>
