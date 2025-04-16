@@ -282,15 +282,14 @@ ym(99989520, 'userParams', {
             Внутренний div
         </div>
     </div>
-
     <script>
         const toggleButton = document.getElementById('toggleButton');
-        const outerDiv = document.getElementById('outerDiv');
+        const outerDiv = document.querySelector('.outerDiv'); // Получаем по классу
 
         toggleButton.addEventListener('click', function() {
             outerDiv.classList.toggle('hidden');
         });
-    </script>
+    </script>    
             
         </section>
         <aside class="page-main-purchase-now">
