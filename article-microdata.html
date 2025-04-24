@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lorem, ipsum dolor</title>
+    <style>
+      body {
+        font-family: "Georgia", serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.8;
+        color: #333;
+      }
+      .article-header {
+        text-align: center;
+        margin-bottom: 40px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
+      }
+      .article-title {
+        font-size: 2.2em;
+        margin-bottom: 10px;
+      }
+      .article-meta {
+        color: #777;
+        font-style: italic;
+      }
+      .article-content {
+        margin-bottom: 40px;
+      }
+      .article-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+      .category-tag {
+        display: inline-block;
+        padding: 5px 15px;
+        background: #f0f0f0;
+        border-radius: 20px;
+        font-size: 0.9em;
+        margin-right: 10px;
+        color: #555;
+      }
+      .author-info {
+        display: flex;
+        align-items: center;
+        margin-top: 40px;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 8px;
+      }
+      .author-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-right: 20px;
+        object-fit: cover;
+      }
+      .qa-item {
+        margin-bottom: 25px;
+        padding: 15px;
+        background: #f8f8f8;
+        border-radius: 8px;
+      }
+      .qa-question {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+      .review {
+        padding: 20px;
+        background: #f0f7ff;
+        border-left: 4px solid #007bff;
+        margin: 30px 0;
+      }
+    </style>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript" >
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();
+    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+ 
+    ym(101349913, "init", {
+         clickmap:true,
+         trackLinks:true,
+         accurateTrackBounce:true
+    });
+ </script>
+ <!-- /Yandex.Metrika counter -->
+  </head>
+  <body>
+    <article
+      itemscope
+      itemtype="http://schema.org/Article"
+      itemprop="mainEntityOfPage"
+      itemid="/article/47834324"
+    >
+      <header class="article-header">
+        <div class="category-tag" itemprop="about">Topic here</div>
+        <h1 class="article-title" itemprop="headline">
+            Это заголовок разметки Microdata
+        </h1>
+        <div class="article-meta">
+          Опубликовано
+          <time itemprop="datePublished" datetime="2018-11-06T07:30:00Z">
+            10:30, 6 ноября 2018</time>
+          · Автор: <a href="#author" itemprop="author">John Doe</a>
+        </div>
+      </header>
+
+      <div class="article-content">
+        <img src="https://placehold.co/800x400/EEE/31343C?text=Lorem" alt="Lorem" class="article-image" itemprop="image"/>
+
+        <p itemprop="description">
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Optio, laboriosam!
+        </p>
+
+        <h2>Lorem, ipsum dolor.</h2>
+        <p itemprop="articleBody">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam facilis eum deserunt, totam recusandae excepturi ea a perspiciatis odio ipsam odit corrupti cumque, nisi pariatur temporibus nobis ducimus inventore quibusdam ex est dolorum corporis. Fugiat unde officiis cumque omnis ab adipisci nobis laborum excepturi ducimus esse alias quam animi, quia itaque odit iusto magni recusandae, eius nam hic possimus. Vel ipsa culpa nulla nam assumenda, animi aspernatur cumque tempora dolorem, similique amet ut qui reiciendis deleniti libero sunt corrupti saepe unde ducimus eligendi a debitis earum. Quasi deserunt itaque harum veniam. Corrupti distinctio perferendis quo repellat optio inventore esse dolore sed magnam! Culpa, sapiente ipsam. Veniam ex architecto officia? Assumenda, ex velit incidunt aut reiciendis similique tenetur ut distinctio qui fugit impedit eligendi sunt nostrum laudantium perspiciatis possimus nemo id quo alias veniam autem corrupti. Vel delectus quasi modi. Tempore, soluta laudantium inventore placeat veritatis dignissimos minima vel aliquam consequatur quaerat molestiae explicabo cum facere molestias, reiciendis magni in ad nobis dolores aut nam. Eveniet eos adipisci accusantium beatae harum alias est voluptas fuga dicta suscipit, deleniti nemo obcaecati, nihil mollitia reiciendis voluptate rem commodi neque assumenda non? Tempora pariatur ut, nam at quas magni illo eveniet aspernatur iusto quos!
+        </p>
+      </div>
+
+      <div class="author-info" id="author" itemscope itemtype="http://schema.org/Person">
+        <img src="https://placehold.co/100x100/EEE/31343C?text=JD" alt="John Doe" class="author-avatar" itemprop="image"/>
+      <div>
+          <h3 itemprop="name">John Doe</h3>
+          <p itemprop="jobTitle">
+            Job title here
+          </p>
+        </div>
+      </div>
+    </article>
+  </body>
+</html>
