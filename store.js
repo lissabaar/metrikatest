@@ -13,7 +13,8 @@ const products = [
         },
         category: 'Albums/K-Pop',
         brand: 'Stray Kids',
-        list: 'Product Grid'
+        list: 'Product Grid',
+        position: 1
     },
     {
         id: '02',
@@ -25,7 +26,8 @@ const products = [
         },
         category: 'Albums/K-Pop',
         brand: 'Stray Kids',
-        list: 'Product Grid'
+        list: 'Product Grid',
+        position: 2
     },
     {
         id: '03',
@@ -37,7 +39,8 @@ const products = [
         },
         category: 'Albums/K-Pop',
         brand: 'Stray Kids',
-        list: 'Product Grid'
+        list: 'Product Grid',
+        position: 3
     }
 ];
 
@@ -59,97 +62,60 @@ function updateCartCount() {
 
 // ========== ФУНКЦИИ ДЛЯ ОТПРАВКИ СОБЫТИЙ ========== //
 
-function sendAddEvent(product, quantity = 1) {
+function sendEcommerceEvent(type, product, quantity = 1, orderData = null) {
     const event = {
-        "ecommerce": {
-            "currencyCode": CURRENCY,
-            "add": {
-                "products": [{
-                    "id": product.id,
-                    "name": product.name,
-                    "price": product.price,
-                    "brand": product.brand,
-                    "category": product.category,
-                    "variant": product.variant ? JSON.stringify(product.variant) : '',
-                    "quantity": quantity,
-                    "list": product.list,
-                    "position": parseInt(product.id)
-                }]
-            }
-        }
-    };
-    console.log('Sending add event:', event);
-    dataLayer.push(event);
-}
-
-function sendRemoveEvent(product, quantity = 1) {
-    const event = {
-        "ecommerce": {
-            "currencyCode": CURRENCY,
-            "remove": {
-                "products": [{
-                    "id": product.id,
-                    "name": product.name,
-                    "price": product.price,
-                    "brand": product.brand,
-                    "category": product.category,
-                    "variant": product.variant ? JSON.stringify(product.variant) : '',
-                    "quantity": quantity,
-                    "list": product.list,
-                    "position": parseInt(product.id)
-                }]
-            }
-        }
-    };
-    console.log('Sending remove event:', event);
-    dataLayer.push(event);
-}
-
-function sendPurchaseEvent(orderId, products, revenue) {
-    const event = {
-        "ecommerce": {
-            "currencyCode": CURRENCY,
-            "purchase": {
-                "actionField": {
-                    "id": orderId,
-                    "revenue": revenue
+        ecommerce: {
+            currencyCode: CURRENCY,
+            [type]: type === 'purchase' ? {
+                actionField: {
+                    id: orderData?.orderId || 'order_' + Date.now(),
+                    revenue: orderData?.revenue || 0
                 },
-                "products": products.map(item => ({
-                    "id": item.id,
-                    "name": item.name,
-                    "price": item.price,
-                    "brand": item.brand,
-                    "category": item.category,
-                    "variant": item.variant ? JSON.stringify(item.variant) : '',
-                    "quantity": item.quantity,
-                    "position": parseInt(item.id)
+                products: product.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    brand: item.brand,
+                    category: item.category,
+                    variant: JSON.stringify(item.variant || {}),
+                    quantity: item.quantity,
+                    position: item.position
                 }))
+            } : {
+                products: [{
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    brand: product.brand,
+                    category: product.category,
+                    variant: JSON.stringify(product.variant || {}),
+                    quantity: quantity,
+                    position: product.position
+                }]
             }
         }
     };
-    console.log('Sending purchase event:', event);
-    dataLayer.push(event);
+
+    window.dataLayer.push(event);
 }
 
 // ========== ФУНКЦИИ КОРЗИНЫ ========== //
 
 function updateQuantity(index, newQuantity) {
-    newQuantity = parseInt(newQuantity);
-    if (isNaN(newQuantity)) newQuantity = 1;
+    newQuantity = parseInt(newQuantity) || 1;
     if (newQuantity < 1) newQuantity = 1;
     
     const oldQuantity = cart[index].quantity;
-    const quantityChange = newQuantity - oldQuantity;
+    if (newQuantity === oldQuantity) return;
     
-    if (quantityChange === 0) return;
-    
+    const difference = newQuantity - oldQuantity;
     cart[index].quantity = newQuantity;
     saveCart();
     
-    if (quantityChange > 0) {
-        sendAddEvent(cart[index], quantityChange);
+    if (difference > 0) {
+        sendEcommerceEvent('add', cart[index], difference);
     } else {
-        sendRemoveEvent(cart[index], Math.abs(quantityChange));
+        sendEcommerceEvent('remove', cart[index], Math.abs(difference));
     }
     
     renderCart();
@@ -170,7 +136,7 @@ function addToCart(productId) {
 
     if (existingIndex >= 0) {
         cart[existingIndex].quantity += 1;
-        sendAddEvent(cart[existingIndex]);
+        sendEcommerceEvent('add', cart[existingIndex]);
     } else {
         const newItem = {
             ...product,
@@ -178,7 +144,7 @@ function addToCart(productId) {
             quantity: 1
         };
         cart.push(newItem);
-        sendAddEvent(newItem);
+        sendEcommerceEvent('add', newItem);
     }
 
     saveCart();
@@ -189,7 +155,7 @@ function removeFromCart(index) {
     if (index < 0 || index >= cart.length) return;
     
     const [removedItem] = cart.splice(index, 1);
-    sendRemoveEvent(removedItem, removedItem.quantity);
+    sendEcommerceEvent('remove', removedItem, removedItem.quantity);
     
     saveCart();
     renderCart();
@@ -216,7 +182,10 @@ function checkout() {
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const orderId = 'order_' + Date.now();
     
-    sendPurchaseEvent(orderId, [...cart], total);
+    sendEcommerceEvent('purchase', [...cart], 1, {
+        orderId: orderId,
+        revenue: total
+    });
 
     cart = [];
     saveCart();
@@ -262,7 +231,7 @@ function renderProducts() {
                 brand: p.brand,
                 category: p.category,
                 list: p.list,
-                position: parseInt(p.id)
+                position: p.position
             }))
         }
     });
