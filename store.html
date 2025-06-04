@@ -119,7 +119,7 @@ ymab('metrika.99989520', 'init'/*, {clientFeatures}, {callback}*/);
 </head>
 <body>
     <div class="form-container">
-        <h2>Контактная форма</h2>
+        <h2>Контактная форма во фрейме</h2>
         <form method="post">
             <div class="form-group">
                 <label for="name">Имя:</label>
@@ -129,20 +129,6 @@ ymab('metrika.99989520', 'init'/*, {clientFeatures}, {callback}*/);
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="subject">Тема:</label>
-                <select id="subject" name="subject">
-                    <option value="question">Вопрос</option>
-                    <option value="feedback">Отзыв</option>
-                    <option value="support">Поддержка</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="message">Сообщение:</label>
-                <textarea id="message" name="message" rows="4" required></textarea>
             </div>
             
             <button type="submit">Отправить</button>
@@ -160,22 +146,30 @@ ymab('metrika.99989520', 'init'/*, {clientFeatures}, {callback}*/);
         
         const products = [
             {
-                id: '1',
-                name: 'Футболка Premium',
-                price: 1500,
-                image: 'https://via.placeholder.com/400x300/2c3e50/ffffff?text=T-Shirt',
+                id: '01',
+                name: 'Stray Kids - SKZHOP HIPTAPE \'合 (HOP)\'',
+                price: 2500,
+                image: 'https://candyshopkpop.ru/pictures/product/small/7831_small.jpg',
                 variants: {
-                    color: ['белый', 'черный'],
-                    size: ['S', 'M', 'L']
+                    version: ['HIPTAPE', 'SKZHOP ', 'ACCORFION']
                 }
             },
             {
-                id: '2',
-                name: 'Кроссовки Pro',
-                price: 5000,
-                image: 'https://via.placeholder.com/400x300/e74c3c/ffffff?text=Sneakers',
+                id: '02',
+                name: 'Stray Kids - ATE',
+                price: 2250,
+                image: 'https://candyshopkpop.ru/pictures/product/small/7493_small.jpg',
                 variants: {
-                    size: ['38', '39', '40']
+                    version: ['ATE', 'ACCORDION ', 'NEMO']
+                }
+            },
+            {
+                id: '02',
+                name: 'Stray Kids - 樂 ROCK-STAR',
+                price: 1900,
+                image: 'https://candyshopkpop.ru/pictures/product/small/7443_small.png',
+                variants: {
+                    version: ['STANDART', 'HEADLINER ', 'LIMITED']
                 }
             }
         ];
@@ -217,8 +211,9 @@ ymab('metrika.99989520', 'init'/*, {clientFeatures}, {callback}*/);
                         id: p.id,
                         name: p.name,
                         price: p.price,
-                        category: 'Одежда',
-                        list: 'Главная страница магазина'
+                        category: 'Albums',
+                        list: 'Stray Kids ' + this.category,
+                        podition: p.id
                     }))
                 }
             });
@@ -251,16 +246,16 @@ ymab('metrika.99989520', 'init'/*, {clientFeatures}, {callback}*/);
 
             // Событие добавления в корзину
             dataLayer.push({
-                event: "addToCart",
-                ecommerce: {
-                    currencyCode: "RUB",
-                    add: {
-                        products: [{
-                            id: product.id,
-                            name: product.name,
-                            price: product.price,
-                            variant: JSON.stringify(variants),
-                            quantity: 1
+                // event: "addToCart",
+                "ecommerce": {
+                   "currencyCode": "RUB",
+                    "add": {
+                        "products": [{
+                            "id": product.id,
+                            "name": product.name,
+                            "price": product.price,
+                            "variant": JSON.stringify(variants),
+                            "quantity": 1
                         }]
                     }
                 }
@@ -286,21 +281,22 @@ ymab('metrika.99989520', 'init'/*, {clientFeatures}, {callback}*/);
             updateCart();
 
             // Событие удаления из корзины
-            dataLayer.push({
-                event: "removeFromCart",
-                ecommerce: {
-                    currencyCode: "RUB",
-                    remove: {
-                        products: [{
-                            id: removed.id,
-                            name: removed.name,
-                            price: removed.price,
-                            variant: JSON.stringify(removed.variant),
-                            quantity: removed.quantity
-                        }]
-                    }
+          dataLayer.push({
+    "ecommerce": {
+        "currencyCode": "RUB",
+        "remove": {
+            "products": [
+                {
+                            "id": removed.id,
+                            "price": removed.price,
+                            // "variant": removed.variants),
+                            "quantity": 1
                 }
-            });
+            ]
+        }
+    }
+});
+
         }
 
         function checkout() {
