@@ -271,24 +271,22 @@ function renderProducts() {
                 id: p.id,
                 name: p.name,
                 price: p.price,
-                brand: "JYP",
-                category: "Albums",
-                list: "Stray Kids Albums",
-                position: parseInt(p.id)
+                brand: p.brand,
+                category: p.category,
+                list: p.list,
+                position: p.position
             }))
         }
     });
 }
 
-// Инициализация
+// Инициализация магазина
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('products-grid')) {
-        // Рендер товаров
+        renderProducts();
     }
     if (document.getElementById('cart-items-container')) {
         renderCart();
     }
     updateCartCount();
 });
-
-
