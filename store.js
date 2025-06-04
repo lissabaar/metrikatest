@@ -225,7 +225,7 @@ function renderProducts() {
                 price: p.price,
                 category: 'Albums',
                 list: 'Stray Kids Albums',
-                position: parseInt(p.id)
+                position: +p.id
             }))
         }
     });
@@ -279,22 +279,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (document.getElementById('cart-items-container')) {
         renderCart();
-        
-        // Событие просмотра корзины
-        dataLayer.push({
-            ecommerce: {
-                currencyCode: CURRENCY,
-                cart: {
-                    products: cart.map(item => ({
-                        id: item.id,
-                        name: item.name,
-                        price: item.price,
-                        variant: JSON.stringify(item.variant),
-                        quantity: item.quantity
-                    }))
-                }
-            }
-        });
     }
     
     updateCartCount();
