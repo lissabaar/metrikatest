@@ -10,9 +10,9 @@ const products = [
         variants: {
             version: ['HIPTAPE', 'SKZHOP', 'ACCORDION']
         },
-        category: 'Albums/K-Pop',
-        brand: 'Stray Kids',
-        list: 'Catalog',
+        category: 'Albums',
+        brand: 'JYP',
+        list: 'Stray Kids Albums',
         position: 1
     },
     {
@@ -23,10 +23,23 @@ const products = [
         variants: {
             version: ['ATE', 'ACCORDION', 'NEMO']
         },
-        category: 'Albums/K-Pop',
-        brand: 'Stray Kids',
-        list: 'Catalog',
+        category: 'Albums',
+        brand: 'JYP',
+        list: 'Stray Kids Albums',
         position: 2
+    },
+    {
+        id: '03',
+        name: 'Stray Kids - 樂 ROCK-STAR',
+        price: 1900,
+        image: 'https://candyshopkpop.ru/pictures/product/small/7443_small.png',
+        variants: {
+            version: ['STANDARD', 'HEADLINER', 'LIMITED']
+        },
+        category: 'Albums',
+        brand: 'JYP',
+        list: 'Stray Kids Albums',
+        position: 3
     }
 ];
 
@@ -226,6 +239,47 @@ function renderCart() {
         cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString();
 }
 
+function renderProducts() {
+    const grid = document.getElementById('products-grid');
+    if (!grid) return;
+
+    grid.innerHTML = products.map(product => `
+        <div class="product-card">
+            <div class="product-image">
+                <img src="${product.image}" alt="${product.name}">
+            </div>
+            <div class="product-content">
+                <h3 class="product-title">${product.name}</h3>
+                <p class="product-price">${product.price.toLocaleString()} руб.</p>
+                ${Object.entries(product.variants).map(([key, values]) => `
+                    <label class="variant-label">${key}:</label>
+                    <select data-product="${product.id}" data-variant="${key}">
+                        ${values.map(v => `<option>${v}</option>`).join('')}
+                    </select>
+                `).join('')}
+                <button class="btn btn-primary" onclick="addToCart('${product.id}')">В корзину</button>
+                <a href="product-${product.id}.html" class="btn btn-outline">Подробнее</a>
+            </div>
+        </div>
+    `).join('');
+
+    // Событие просмотра товаров
+    dataLayer.push({
+        ecommerce: {
+            currencyCode: "RUB",
+            impressions: products.map(p => ({
+                id: p.id,
+                name: p.name,
+                price: p.price,
+                brand: "JYP",
+                category: "Albums",
+                list: "Stray Kids Albums",
+                position: parseInt(p.id)
+            }))
+        }
+    });
+}
+
 // Инициализация
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('products-grid')) {
@@ -236,3 +290,5 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     updateCartCount();
 });
+
+
