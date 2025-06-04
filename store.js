@@ -121,7 +121,7 @@ function sendPurchaseEvent(orderId, products, revenue) {
 
 function updateQuantity(index, newQuantity) {
     newQuantity = parseInt(newQuantity);
-    if (isNaN(newQuantity) newQuantity = 1;
+    if (isNaN(newQuantity)) newQuantity = 1;
     if (newQuantity < 1) newQuantity = 1;
     
     const oldQuantity = cart[index].quantity;
@@ -202,14 +202,11 @@ function checkout() {
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const orderId = 'order_' + Date.now();
     
-    // Отправляем событие покупки
     sendPurchaseEvent(orderId, [...cart], total);
 
-    // Очищаем корзину
     cart = [];
     saveCart();
     
-    // Показываем сообщение без редиректа
     alert(`Заказ #${orderId} оформлен успешно!\nСумма: ${total.toLocaleString()} руб.`);
     renderCart();
 }
@@ -298,7 +295,11 @@ function renderCart() {
 // ========== ИНИЦИАЛИЗАЦИЯ ========== //
 
 document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('products-grid')) renderProducts();
-    if (document.getElementById('cart-items-container')) renderCart();
+    if (document.getElementById('products-grid')) {
+        renderProducts();
+    }
+    if (document.getElementById('cart-items-container')) {
+        renderCart();
+    }
     updateCartCount();
 });
