@@ -71,6 +71,7 @@ function removeFromCart(index) {
 
 // Покупка (полное соответствие документации)
 function checkout() {
+    console.log(cart)
     if (cart.length === 0) return;
     
     const orderId = 'order_' + Date.now();
