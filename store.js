@@ -1,4 +1,5 @@
 window.dataLayer = window.dataLayer || [];
+const CURRENCY = "RUB";
 
 // Товары магазина
 const products = [
@@ -46,19 +47,30 @@ const products = [
 // Корзина
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-// Добавление в корзину
+// ===== ОСНОВНЫЕ ФУНКЦИИ ===== //
+function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+}
+
+function updateCartCount() {
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const cartCountElement = document.getElementById('cart-count');
+    if (cartCountElement) cartCountElement.textContent = count;
+}
+
+// ===== СОБЫТИЯ КОРЗИНЫ ===== //
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
     const variant = document.querySelector(`[data-product="${productId}"]`).value;
     
-    // Ищем товар в корзине
-    const existingItem = cart.find(item => 
+    const existingIndex = cart.findIndex(item => 
         item.id === productId && item.variant === variant);
     
-    if (existingItem) {
-        existingItem.quantity += 1;
+    if (existingIndex >= 0) {
+        cart[existingIndex].quantity += 1;
     } else {
         cart.push({
             ...product,
@@ -67,14 +79,13 @@ function addToCart(productId) {
         });
     }
     
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
+    saveCart();
     renderCart();
     
-    // Отправляем событие добавления
+    // Событие добавления
     dataLayer.push({
         "ecommerce": {
-            "currencyCode": "RUB",
+            "currencyCode": CURRENCY,
             "add": {
                 "products": [{
                     "id": product.id,
@@ -91,33 +102,31 @@ function addToCart(productId) {
     });
 }
 
-// Изменение количества
 function updateQuantity(index, newQuantity) {
     newQuantity = parseInt(newQuantity) || 1;
     if (newQuantity < 1) newQuantity = 1;
     
-    const oldQuantity = cart[index].quantity;
+    const item = cart[index];
+    const oldQuantity = item.quantity;
     const difference = newQuantity - oldQuantity;
-    cart[index].quantity = newQuantity;
     
-    localStorage.setItem('cart', JSON.stringify(cart));
-    renderCart();
+    if (difference === 0) return;
     
-    // Отправляем событие add или remove
+    // Событие изменения количества
     if (difference > 0) {
         dataLayer.push({
             "ecommerce": {
-                "currencyCode": "RUB",
+                "currencyCode": CURRENCY,
                 "add": {
                     "products": [{
-                        "id": cart[index].id,
-                        "name": cart[index].name,
-                        "price": cart[index].price,
-                        "brand": cart[index].brand,
-                        "category": cart[index].category,
+                        "id": item.id,
+                        "name": item.name,
+                        "price": item.price,
+                        "brand": item.brand,
+                        "category": item.category,
                         "quantity": difference,
-                        "list": cart[index].list,
-                        "position": cart[index].position
+                        "list": item.list,
+                        "position": item.position
                     }]
                 }
             }
@@ -125,35 +134,37 @@ function updateQuantity(index, newQuantity) {
     } else {
         dataLayer.push({
             "ecommerce": {
-                "currencyCode": "RUB",
+                "currencyCode": CURRENCY,
                 "remove": {
                     "products": [{
-                        "id": cart[index].id,
-                        "name": cart[index].name,
-                        "price": cart[index].price,
-                        "brand": cart[index].brand,
-                        "category": cart[index].category,
+                        "id": item.id,
+                        "name": item.name,
+                        "price": item.price,
+                        "brand": item.brand,
+                        "category": item.category,
                         "quantity": Math.abs(difference),
-                        "list": cart[index].list,
-                        "position": cart[index].position
+                        "list": item.list,
+                        "position": item.position
                     }]
                 }
             }
         });
     }
+    
+    item.quantity = newQuantity;
+    saveCart();
+    renderCart();
 }
 
-// Удаление из корзины
 function removeFromCart(index) {
-    const removedItem = cart.splice(index, 1)[0];
-    localStorage.setItem('cart', JSON.stringify(cart));
-    renderCart();
-    updateCartCount();
+    if (index < 0 || index >= cart.length) return;
     
-    // Отправляем событие удаления
+    const removedItem = cart[index];
+    
+    // Событие удаления
     dataLayer.push({
         "ecommerce": {
-            "currencyCode": "RUB",
+            "currencyCode": CURRENCY,
             "remove": {
                 "products": [{
                     "id": removedItem.id,
@@ -168,19 +179,25 @@ function removeFromCart(index) {
             }
         }
     });
+    
+    cart.splice(index, 1);
+    saveCart();
+    renderCart();
 }
 
-// Оформление заказа
 function checkout() {
-    if (cart.length === 0) return;
-    
+    if (cart.length === 0) {
+        alert('Корзина пуста!');
+        return;
+    }
+
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const orderId = 'order_' + Date.now();
     
-    // Отправляем событие покупки
+    // Событие покупки (точно по документации)
     dataLayer.push({
         "ecommerce": {
-            "currencyCode": "RUB",
+            "currencyCode": CURRENCY,
             "purchase": {
                 "actionField": {
                     "id": orderId,
@@ -194,51 +211,19 @@ function checkout() {
                     "category": item.category,
                     "variant": item.variant,
                     "quantity": item.quantity,
-                    "list": item.list,
                     "position": item.position
                 }))
             }
         }
     });
     
-    // Очищаем корзину
     cart = [];
-    localStorage.setItem('cart', JSON.stringify(cart));
+    saveCart();
+    alert(`Заказ #${orderId} оформлен! Сумма: ${total.toLocaleString()} руб.`);
     renderCart();
-    alert('Заказ оформлен! Спасибо за покупку!');
 }
 
-// Остальные функции
-function updateCartCount() {
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    document.getElementById('cart-count').textContent = count;
-}
-
-function renderCart() {
-    const container = document.getElementById('cart-items-container');
-    if (!container) return;
-    
-    container.innerHTML = cart.map((item, index) => `
-        <div class="cart-item">
-            <div class="cart-item-image" style="background-image: url('${item.image}')"></div>
-            <div class="cart-item-info">
-                <h3>${item.name}</h3>
-                <p>${item.variant}</p>
-                <p class="price">${item.price.toLocaleString()} руб. × 
-                    <input type="number" min="1" value="${item.quantity}" 
-                           onchange="updateQuantity(${index}, this.value)">
-                </p>
-            </div>
-            <button class="btn btn-outline" onclick="removeFromCart(${index})">
-                Удалить
-            </button>
-        </div>
-    `).join('');
-    
-    document.getElementById('cart-total').textContent = 
-        cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString();
-}
-
+// ===== РЕНДЕР ===== //
 function renderProducts() {
     const grid = document.getElementById('products-grid');
     if (!grid) return;
@@ -263,10 +248,10 @@ function renderProducts() {
         </div>
     `).join('');
 
-    // Событие просмотра товаров
+    // Просмотр товаров
     dataLayer.push({
         ecommerce: {
-            currencyCode: "RUB",
+            currencyCode: CURRENCY,
             impressions: products.map(p => ({
                 id: p.id,
                 name: p.name,
@@ -280,13 +265,45 @@ function renderProducts() {
     });
 }
 
-// Инициализация магазина
+function renderCart() {
+    const container = document.getElementById('cart-items-container');
+    const emptyMsg = document.getElementById('empty-cart-message');
+    const summary = document.getElementById('cart-summary');
+    
+    if (!container) return;
+    
+    if (cart.length === 0) {
+        if (emptyMsg) emptyMsg.classList.remove('hidden');
+        if (summary) summary.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+    }
+    
+    if (emptyMsg) emptyMsg.classList.add('hidden');
+    if (summary) summary.classList.remove('hidden');
+    
+    container.innerHTML = cart.map((item, index) => `
+        <div class="cart-item">
+            <div class="cart-item-image" style="background-image: url('${item.image}')"></div>
+            <div class="cart-item-info">
+                <h3>${item.name}</h3>
+                <p>${item.variant}</p>
+                <p class="price">${item.price.toLocaleString()} руб. × 
+                    <input type="number" min="1" value="${item.quantity}" 
+                           onchange="updateQuantity(${index}, this.value)">
+                </p>
+            </div>
+            <button class="btn btn-outline" onclick="removeFromCart(${index})">Удалить</button>
+        </div>
+    `).join('');
+    
+    document.getElementById('cart-total').textContent = 
+        cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toLocaleString();
+}
+
+// ИНИЦИАЛИЗАЦИЯ
 document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('products-grid')) {
-        renderProducts();
-    }
-    if (document.getElementById('cart-items-container')) {
-        renderCart();
-    }
+    if (document.getElementById('products-grid')) renderProducts();
+    if (document.getElementById('cart-items-container')) renderCart();
     updateCartCount();
 });
