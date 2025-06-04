@@ -11,7 +11,9 @@ const products = [
         variants: {
             version: ['HIPTAPE', 'SKZHOP', 'ACCORDION']
         },
-        category: 'Albums'
+        category: 'Albums/K-Pop',
+        brand: 'Stray Kids',
+        list: 'Product Grid'
     },
     {
         id: '02',
@@ -21,7 +23,9 @@ const products = [
         variants: {
             version: ['ATE', 'ACCORDION', 'NEMO']
         },
-        category: 'Albums'
+        category: 'Albums/K-Pop',
+        brand: 'Stray Kids',
+        list: 'Product Grid'
     },
     {
         id: '03',
@@ -31,7 +35,9 @@ const products = [
         variants: {
             version: ['STANDARD', 'HEADLINER', 'LIMITED']
         },
-        category: 'Albums'
+        category: 'Albums/K-Pop',
+        brand: 'Stray Kids',
+        list: 'Product Grid'
     }
 ];
 
@@ -62,9 +68,12 @@ function sendAddEvent(product, quantity = 1) {
                     "id": product.id,
                     "name": product.name,
                     "price": product.price,
-                    "variant": JSON.stringify(product.variant),
+                    "brand": product.brand,
                     "category": product.category,
-                    "quantity": quantity
+                    "variant": product.variant ? JSON.stringify(product.variant) : '',
+                    "quantity": quantity,
+                    "list": product.list,
+                    "position": parseInt(product.id)
                 }]
             }
         }
@@ -82,9 +91,12 @@ function sendRemoveEvent(product, quantity = 1) {
                     "id": product.id,
                     "name": product.name,
                     "price": product.price,
-                    "variant": JSON.stringify(product.variant),
+                    "brand": product.brand,
                     "category": product.category,
-                    "quantity": quantity
+                    "variant": product.variant ? JSON.stringify(product.variant) : '',
+                    "quantity": quantity,
+                    "list": product.list,
+                    "position": parseInt(product.id)
                 }]
             }
         }
@@ -106,9 +118,11 @@ function sendPurchaseEvent(orderId, products, revenue) {
                     "id": item.id,
                     "name": item.name,
                     "price": item.price,
-                    "variant": JSON.stringify(item.variant),
+                    "brand": item.brand,
                     "category": item.category,
-                    "quantity": item.quantity
+                    "variant": item.variant ? JSON.stringify(item.variant) : '',
+                    "quantity": item.quantity,
+                    "position": parseInt(item.id)
                 }))
             }
         }
@@ -245,8 +259,9 @@ function renderProducts() {
                 id: p.id,
                 name: p.name,
                 price: p.price,
+                brand: p.brand,
                 category: p.category,
-                list: 'Stray Kids Albums',
+                list: p.list,
                 position: parseInt(p.id)
             }))
         }
