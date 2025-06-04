@@ -54,7 +54,7 @@ function updateCartCount() {
 // ========== ФУНКЦИИ ДЛЯ ОТПРАВКИ СОБЫТИЙ ========== //
 
 function sendAddEvent(product, quantity = 1) {
-    dataLayer.push({
+    const event = {
         "ecommerce": {
             "currencyCode": CURRENCY,
             "add": {
@@ -68,11 +68,13 @@ function sendAddEvent(product, quantity = 1) {
                 }]
             }
         }
-    });
+    };
+    console.log('Sending add event:', event);
+    dataLayer.push(event);
 }
 
 function sendRemoveEvent(product, quantity = 1) {
-    dataLayer.push({
+    const event = {
         "ecommerce": {
             "currencyCode": CURRENCY,
             "remove": {
@@ -86,11 +88,13 @@ function sendRemoveEvent(product, quantity = 1) {
                 }]
             }
         }
-    });
+    };
+    console.log('Sending remove event:', event);
+    dataLayer.push(event);
 }
 
 function sendPurchaseEvent(orderId, products, revenue) {
-    dataLayer.push({
+    const event = {
         "ecommerce": {
             "currencyCode": CURRENCY,
             "purchase": {
@@ -108,13 +112,16 @@ function sendPurchaseEvent(orderId, products, revenue) {
                 }))
             }
         }
-    });
+    };
+    console.log('Sending purchase event:', event);
+    dataLayer.push(event);
 }
 
 // ========== ФУНКЦИИ КОРЗИНЫ ========== //
 
 function updateQuantity(index, newQuantity) {
     newQuantity = parseInt(newQuantity);
+    if (isNaN(newQuantity) newQuantity = 1;
     if (newQuantity < 1) newQuantity = 1;
     
     const oldQuantity = cart[index].quantity;
@@ -167,7 +174,7 @@ function addToCart(productId) {
 function removeFromCart(index) {
     if (index < 0 || index >= cart.length) return;
     
-    const removedItem = cart.splice(index, 1)[0];
+    const [removedItem] = cart.splice(index, 1);
     sendRemoveEvent(removedItem, removedItem.quantity);
     
     saveCart();
@@ -196,7 +203,7 @@ function checkout() {
     const orderId = 'order_' + Date.now();
     
     // Отправляем событие покупки
-    sendPurchaseEvent(orderId, cart, total);
+    sendPurchaseEvent(orderId, [...cart], total);
 
     // Очищаем корзину
     cart = [];
