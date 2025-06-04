@@ -130,13 +130,20 @@ function updateQuantity(index, newQuantity) {
     saveCart();
     renderCart();
     
-    const action = quantityChange > 0 ? 'add' : 'remove';
-    const quantity = Math.abs(quantityChange);
-    
-    pushEcommerceEvent(action, [{
-        ...cart[index],
-        quantity
-    }]);
+    // Генерируем отдельные события для add/remove
+    if (quantityChange > 0) {
+        // Если количество увеличилось - событие add
+        pushEcommerceEvent('add', [{
+            ...cart[index],
+            quantity: quantityChange
+        }]);
+    } else {
+        // Если количество уменьшилось - событие remove
+        pushEcommerceEvent('remove', [{
+            ...cart[index],
+            quantity: Math.abs(quantityChange)
+        }]);
+    }
 }
 
 function removeFromCart(index) {
