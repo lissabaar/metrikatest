@@ -10,7 +10,8 @@ const products = [
         image: 'https://candyshopkpop.ru/pictures/product/small/7831_small.jpg',
         variants: {
             version: ['HIPTAPE', 'SKZHOP', 'ACCORDION']
-        }
+        },
+        category: 'Albums'
     },
     {
         id: '02',
@@ -19,7 +20,8 @@ const products = [
         image: 'https://candyshopkpop.ru/pictures/product/small/7493_small.jpg',
         variants: {
             version: ['ATE', 'ACCORDION', 'NEMO']
-        }
+        },
+        category: 'Albums'
     },
     {
         id: '03',
@@ -28,7 +30,8 @@ const products = [
         image: 'https://candyshopkpop.ru/pictures/product/small/7443_small.png',
         variants: {
             version: ['STANDARD', 'HEADLINER', 'LIMITED']
-        }
+        },
+        category: 'Albums'
     }
 ];
 
@@ -45,43 +48,91 @@ function saveCart() {
 function updateCartCount() {
     const count = cart.reduce((sum, item) => sum + item.quantity, 0);
     const cartCountElement = document.getElementById('cart-count');
-    if (cartCountElement) {
-        cartCountElement.textContent = count;
-    }
+    if (cartCountElement) cartCountElement.textContent = count;
 }
 
-function pushEcommerceEvent(action, products, additionalData = {}) {
-    const event = {
-        ecommerce: {
-            currencyCode: CURRENCY,
-            [action]: {
-                products: products.map(product => ({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    ...(product.variant && { variant: JSON.stringify(product.variant) }),
-                    quantity: product.quantity || 1,
-                    category: 'Albums',
-                    list: 'Stray Kids Albums',
-                    ...additionalData
+// ========== ФУНКЦИИ ДЛЯ ОТПРАВКИ СОБЫТИЙ ========== //
+
+function sendAddEvent(product, quantity = 1) {
+    dataLayer.push({
+        "ecommerce": {
+            "currencyCode": CURRENCY,
+            "add": {
+                "products": [{
+                    "id": product.id,
+                    "name": product.name,
+                    "price": product.price,
+                    "variant": JSON.stringify(product.variant),
+                    "category": product.category,
+                    "quantity": quantity
+                }]
+            }
+        }
+    });
+}
+
+function sendRemoveEvent(product, quantity = 1) {
+    dataLayer.push({
+        "ecommerce": {
+            "currencyCode": CURRENCY,
+            "remove": {
+                "products": [{
+                    "id": product.id,
+                    "name": product.name,
+                    "price": product.price,
+                    "variant": JSON.stringify(product.variant),
+                    "category": product.category,
+                    "quantity": quantity
+                }]
+            }
+        }
+    });
+}
+
+function sendPurchaseEvent(orderId, products, revenue) {
+    dataLayer.push({
+        "ecommerce": {
+            "currencyCode": CURRENCY,
+            "purchase": {
+                "actionField": {
+                    "id": orderId,
+                    "revenue": revenue
+                },
+                "products": products.map(item => ({
+                    "id": item.id,
+                    "name": item.name,
+                    "price": item.price,
+                    "variant": JSON.stringify(item.variant),
+                    "category": item.category,
+                    "quantity": item.quantity
                 }))
             }
         }
-    };
-    
-    if (action === 'purchase') {
-        event.ecommerce[action].actionField = {
-            id: additionalData.orderId || 'order_' + Date.now(),
-            revenue: additionalData.revenue,
-            tax: 0,
-            shipping: 0
-        };
-    }
-    
-    dataLayer.push(event);
+    });
 }
 
 // ========== ФУНКЦИИ КОРЗИНЫ ========== //
+
+function updateQuantity(index, newQuantity) {
+    newQuantity = parseInt(newQuantity);
+    if (newQuantity < 1) newQuantity = 1;
+    
+    const oldQuantity = cart[index].quantity;
+    const quantityChange = newQuantity - oldQuantity;
+    
+    if (quantityChange === 0) return;
+    
+    cart[index].quantity = newQuantity;
+    saveCart();
+    
+    if (quantityChange > 0) {
+        sendAddEvent(cart[index], quantityChange);
+    } else {
+        sendRemoveEvent(cart[index], Math.abs(quantityChange));
+    }
+    
+    renderCart();
+}
 
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
@@ -98,62 +149,29 @@ function addToCart(productId) {
 
     if (existingIndex >= 0) {
         cart[existingIndex].quantity += 1;
+        sendAddEvent(cart[existingIndex]);
     } else {
-        cart.push({
+        const newItem = {
             ...product,
             variant: variants,
             quantity: 1
-        });
+        };
+        cart.push(newItem);
+        sendAddEvent(newItem);
     }
 
     saveCart();
     renderCart();
-
-    pushEcommerceEvent('add', [{
-        ...product,
-        variant: variants,
-        position: parseInt(productId),
-        quantity: 1
-    }]);
-}
-
-function updateQuantity(index, newQuantity) {
-    newQuantity = parseInt(newQuantity);
-    if (newQuantity < 1) newQuantity = 1;
-    
-    const oldQuantity = cart[index].quantity;
-    const quantityChange = newQuantity - oldQuantity;
-    
-    if (quantityChange === 0) return;
-    
-    cart[index].quantity = newQuantity;
-    saveCart();
-    renderCart();
-    
-    // Генерируем отдельные события для add/remove
-    if (quantityChange > 0) {
-        // Если количество увеличилось - событие add
-        pushEcommerceEvent('add', [{
-            ...cart[index],
-            quantity: quantityChange
-        }]);
-    } else {
-        // Если количество уменьшилось - событие remove
-        pushEcommerceEvent('remove', [{
-            ...cart[index],
-            quantity: Math.abs(quantityChange)
-        }]);
-    }
 }
 
 function removeFromCart(index) {
     if (index < 0 || index >= cart.length) return;
     
     const removedItem = cart.splice(index, 1)[0];
+    sendRemoveEvent(removedItem, removedItem.quantity);
+    
     saveCart();
     renderCart();
-    
-    pushEcommerceEvent('remove', [removedItem]);
 }
 
 function checkout() {
@@ -177,16 +195,16 @@ function checkout() {
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const orderId = 'order_' + Date.now();
     
-    pushEcommerceEvent('purchase', cart, {
-        orderId,
-        revenue: total
-    });
+    // Отправляем событие покупки
+    sendPurchaseEvent(orderId, cart, total);
 
+    // Очищаем корзину
     cart = [];
     saveCart();
     
+    // Показываем сообщение без редиректа
     alert(`Заказ #${orderId} оформлен успешно!\nСумма: ${total.toLocaleString()} руб.`);
-    window.location.href = 'store.html';
+    renderCart();
 }
 
 // ========== РЕНДЕР ФУНКЦИИ ========== //
@@ -223,9 +241,9 @@ function renderProducts() {
                 id: p.id,
                 name: p.name,
                 price: p.price,
-                category: 'Albums',
+                category: p.category,
                 list: 'Stray Kids Albums',
-                position: +p.id
+                position: parseInt(p.id)
             }))
         }
     });
@@ -273,13 +291,7 @@ function renderCart() {
 // ========== ИНИЦИАЛИЗАЦИЯ ========== //
 
 document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('products-grid')) {
-        renderProducts();
-    }
-    
-    if (document.getElementById('cart-items-container')) {
-        renderCart();
-    }
-    
+    if (document.getElementById('products-grid')) renderProducts();
+    if (document.getElementById('cart-items-container')) renderCart();
     updateCartCount();
 });
