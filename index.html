@@ -67,6 +67,11 @@
    });
 
     ym(99989520, 'hit', 'spasibo', {'referer': document.referrer});
+
+    // это надо будет убрать
+    fetch(`https://api-metrika.yandex.net/stat/v1/data?ids=99989520&date1=2025-05-01&date2=2025-05-07&dimensions=ym:s:date&metrics=ym:s:visits`, {
+  headers: {'Authorization': 'OAuth YOUR_TOKEN'}
+}).then(r => r.json())
 </script>
 <!-- <noscript><div><img src="https://mc.yandex.ru/watch/99989520" style="position:absolute; left:-9999px;" alt="" /></div></noscript>  -->
 <!--     <noscript><div><img src="https://mc.yandex.ru/watch/100000101" style="position:absolute; left:-9999px;" alt="" /></div></noscript> -->
@@ -584,7 +589,7 @@ ym(99989520, 'userParams', {
                     </div>
                 </article>
                 <article class="page-main-recent-posts-item">
-                    <img class="page-main-recent-posts-item-image" src="img/post-img-two.png" alt="image" width="370"
+                    <img class="page-main-recent-posts-item-image" src="img/post-img-two_.png" alt="image" width="370"
                         height="220">
                     <div class="page-main-recent-posts-item-content">
                         <h3 class="page-main-recent-posts-item-content-title">Lorem ipsum dolor sit amet.</h3>
