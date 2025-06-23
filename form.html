@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма обратной связи</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+        }
+        
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 28px;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5ee;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            outline: none;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 4px rgba(106, 17, 203, 0.1);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        button {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            padding: 16px 0;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(106, 17, 203, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .required::after {
+            content: " *";
+            color: #e63946;
+        }
+        
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+            
+            h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+  <!-- Yandex.Metrika counter -->
+<script type="text/javascript" >
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();
+   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym(99989520, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true,
+        webvisor:true,
+        trackHash:true,
+        ecommerce:"dataLayerMetrika"
+   });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/99989520" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+    <div class="form-container">
+        <h2>Обратная связь</h2>
+        <form>
+          <div class="js-successbox t-form__successbox t-text t-text_md" aria-live="polite" style="display:none;"></div>
+            <div class="input-group">
+                <label for="name" class="required">Ваше имя</label>
+                <input type="text" id="name" placeholder="Иван Иванов" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="email" class="required">Email</label>
+                <input type="email" id="email" placeholder="example@mail.ru" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="phone">Телефон</label>
+                <input type="tel" id="phone" placeholder="+7 (999) 123-45-67">
+            </div>
+            
+            <div class="input-group">
+                <label for="topic" class="required">Тема обращения</label>
+                <select id="topic" required>
+                    <option value="" disabled selected>Выберите тему</option>
+                    <option value="support">Техническая поддержка</option>
+                    <option value="sales">Вопрос по покупке</option>
+                    <option value="feedback">Отзыв о продукте</option>
+                    <option value="other">Другое</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="message" class="required">Сообщение</label>
+                <textarea id="message" placeholder="Опишите ваш вопрос или предложение..." required></textarea>
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="agreement" required>
+                <label for="agreement">Я согласен на обработку персональных данных</label>
+            </div>
+            
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+</body>
+</html>
