@@ -83,7 +83,7 @@ function addToCart(productId) {
     renderCart();
     
     // Событие добавления
-    dataLayer.push({
+    dataLayer.push({"event": "addtocart",
         "ecommerce": {
             "currencyCode": CURRENCY,
             "add": {
