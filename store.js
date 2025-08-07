@@ -202,7 +202,7 @@ function checkout() {
             "purchase": {
                 "actionField": {
                     "id": orderId,
-                    "revenue": total
+                    "revenue": total * 0.9
                 },
                 "products": cart.map(item => ({
                     "id": item.id,
