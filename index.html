@@ -66,9 +66,15 @@
         trackHash:true
    });
 
-    ym(99989520, 'hit', 'spasibo', {'referer': document.referrer});
-    ym(99989520, 'params', {'test1': 1});
-    ym(99989520, 'params', {'test1': 2});
+    // ym(99989520, 'hit', 'spasibo', {'referer': document.referrer});
+    // ym(99989520, 'params', {'test1': 1});
+    // ym(99989520, 'params', {'test1': 2});
+
+    
+    ym(99989520, 'params', {'param_method': 'params'});
+    ym(99989520, 'reachGoal', 'dddd', {'param_method': 'reachGoal'});
+    ym(99989520, 'hit', '#params', {params: {'param_method': 'hit'}});
+
 
     ym(99989520, 'getClientID', async function(clientID) {
   const id = await clientID;
@@ -95,6 +101,8 @@ ymab('metrika.99989520', 'setConfig', {
 ymab('metrika.99989520', 'getFlags', function(flags) {    
 console.log('my flags : ' + flags.flag)
     });
+
+    
 
 </script>
 
@@ -742,6 +750,7 @@ ym(99989520, 'userParams', {
 </body>
 
 </html>
+
 
 
 
