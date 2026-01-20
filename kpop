@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>K-POP Playground</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Базовые стили -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+        }
+
+        header {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+
+        .accent {
+            color: #ff5fd2;
+        }
+    </style>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {
+                if (document.scripts[j].src === r) { return; }
+            }
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],
+            k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=106352967', 'ym');
+
+        ym(106352967, 'init', {
+            ssr:true,
+            webvisor:true,
+            clickmap:true,
+            ecommerce:"dataLayer",
+            accurateTrackBounce:true,
+            trackLinks:true
+        });
+
+        ym(106352967, 'setUserID', "xlov");
+    </script>
+    <noscript>
+        <div>
+            <img src="https://mc.yandex.ru/watch/106352967"
+                 style="position:absolute; left:-9999px;"
+                 alt="" />
+        </div>
+    </noscript>
+    <!-- /Yandex.Metrika counter -->
+
+</head>
+<body>
+
+<header>
+    <h1>K-POP <span class="accent">Universe</span></h1>
+    <p>
+        Небольшой тестовый одностраничник про кей-поп.
+        Можно спокойно играться со стилями, анимациями и сетками.
+    </p>
+</header>
+
+<main>
+    <section class="cards">
+        <div class="card">
+            <h3>Айдолы</h3>
+            <p>
+                Тренировки, концепты, камбэки и фан-культура.
+                K-pop — это больше, чем просто музыка.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Группы</h3>
+            <p>
+                От легенд второго поколения до новичков,
+                которые только дебютировали.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Фандомы</h3>
+            <p>
+                Лайтстики, фан-чаты, стриминг и бесконечные теории.
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>Эстетика</h3>
+            <p>
+                Яркие клипы, мода, визуальные концепты
+                и постоянные эксперименты.
+            </p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    Тестовая страница · K-pop sandbox · 2026
+</footer>
+
+</body>
+</html>
