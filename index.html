@@ -81,6 +81,19 @@
   console.log('cid: ' + id);
 });
 
+    const counter = new Ya.Metrika2(106352967);
+
+    ym(106352967, 'hit', '#contacts', {params:{
+    referer: 'http://example.com/#main'
+}});
+    
+    counter.destruct()
+
+    
+    ym(106352967, 'hit', '#test', {params:{
+    referer: 'http://example.com/#test'
+}});
+
 
 </script>
 <!-- <noscript><div><img src="https://mc.yandex.ru/watch/99989520" style="position:absolute; left:-9999px;" alt="" /></div></noscript>  -->
@@ -777,6 +790,7 @@ ym(99989520, 'userParams', {
 </body>
 
 </html>
+
 
 
 
